@@ -42,6 +42,9 @@ class DocstringMeta:
         self.args = args
         self.description = description
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.args!r}, {self.description!r})"
+
 
 class DocstringParam(DocstringMeta):
     """DocstringMeta symbolizing :param metadata."""
@@ -62,6 +65,10 @@ class DocstringParam(DocstringMeta):
         self.is_optional = is_optional
         self.default = default
 
+    def __str__(self) -> str:
+        type_str = (" [%s]" % self.type_name) if self.type_name else ""
+        return f"Parameter '{self.arg_name}'{type_str}"
+
 
 class DocstringReturns(DocstringMeta):
     """DocstringMeta symbolizing :returns or :yields metadata."""
@@ -78,6 +85,9 @@ class DocstringReturns(DocstringMeta):
         self.type_name = type_name
         self.is_generator = is_generator
 
+    def __str__(self) -> str:
+        return f"Returns: {self.type_name}"
+
 
 class DocstringRaises(DocstringMeta):
     """DocstringMeta symbolizing :raises metadata."""
@@ -89,6 +99,9 @@ class DocstringRaises(DocstringMeta):
         super().__init__(args, description)
         self.type_name = type_name
         self.description = description
+
+    def __str__(self) -> str:
+        return f"Raises: {self.type_name}"
 
 
 class Docstring:

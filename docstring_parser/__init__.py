@@ -1,4 +1,4 @@
-"""Parse docstrings as per Sphinx notation."""
+"""Parse docstrings."""
 
 from .common import (
     Docstring,
