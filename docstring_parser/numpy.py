@@ -2,7 +2,13 @@
 
 from numpydoc import docscrape
 
-from .common import ParseError, Docstring, DocstringMeta
+from .common import (
+    Docstring,
+    DocstringParam,
+    DocstringRaises,
+    DocstringReturns,
+    ParseError,
+)
 
 
 def parse(text: str) -> Docstring:
@@ -43,11 +49,16 @@ def parse(text: str) -> Docstring:
             args = ["param", type_name, arg_name]
         else:
             args = ["param", arg_name]
-        ret.meta.append(DocstringMeta(args, description="\n".join(desc)))
+            type_name = None
+        desc = "\n".join(desc)
+        meta = DocstringParam(args, desc, arg_name, type_name, None)
+        ret.meta.append(meta)
 
-    for type_name, _, desc in doc["Raises"]:
+    for _, type_name, desc in doc["Raises"]:
         args = ["raises", type_name]
-        ret.meta.append(DocstringMeta(args, description="\n".join(desc)))
+        desc = "\n".join(desc)
+        meta = DocstringRaises(args, desc, type_name)
+        ret.meta.append(meta)
 
     if doc["Returns"]:
         arg_name, type_name, desc = doc["Returns"][0]
@@ -55,13 +66,19 @@ def parse(text: str) -> Docstring:
             args = ["returns", type_name]
         else:
             args = ["returns", arg_name]
-        ret.meta.append(DocstringMeta(args, description="\n".join(desc)))
+            type_name = arg_name
+        desc = "\n".join(desc)
+        meta = DocstringReturns(args, desc, type_name, False)
+        ret.meta.append(meta)
     elif doc["Yields"]:
-        type_name, _, desc = doc["Yields"][0]
+        type_name, arg_name, desc = doc["Yields"][0]
         if type_name:
             args = ["yields", type_name]
         else:
-            args = ["yields"]
-        ret.meta.append(DocstringMeta(args, description="\n".join(desc)))
+            args = ["yields", arg_name]
+            type_name = arg_name
+        desc = "\n".join(desc)
+        meta = DocstringReturns(args, desc, type_name, True)
+        ret.meta.append(meta)
 
     return ret

@@ -8,9 +8,11 @@ setup(
     name="docstring_parser",
     long_description=(Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
-    version="0.3",
+    version="0.5",
     url="https://github.com/rr-/docstring_parser",
     packages=find_packages(),
+    package_dir={"docstring_parser": "docstring_parser"},
+    package_data={"docstring_parser": ["../LICENSE.md"]},
     extras_require={"numpy": ["numpydoc"]},
     classifiers=[
         "Environment :: Other Environment",
