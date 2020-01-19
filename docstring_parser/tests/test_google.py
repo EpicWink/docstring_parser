@@ -304,6 +304,26 @@ def test_meta_with_multiline_description() -> None:
     assert docstring.meta[0].description == "asd\n1\n    2\n3"
 
 
+def test_default_args():
+    docstring = parse(
+    """A sample function
+
+    A function the demonstrates docstrings
+    
+    Args:
+        arg1 (int): The firsty arg
+        arg2 (str): The second arg
+        arg3 (float, optional): The third arg. Defaults to 1.0.
+        arg4 (Optional[Dict[str, Any]], optional): The fourth arg. Defaults to None.
+        arg5 (str, optional): The fifth arg. Defaults to DEFAULT_ARG5.
+    
+    Returns:
+        Mapping[str, Any]: The args packed in a mapping
+    """
+    )
+    assert docstring is not None
+
+
 def test_multiple_meta() -> None:
     docstring = parse(
         """
@@ -346,7 +366,6 @@ def test_params() -> None:
             priority (int): description 2
             sender (str?): description 3
             ratio (Optional[float], optional): description 4
-
         """
     )
     assert len(docstring.params) == 4
@@ -388,6 +407,60 @@ def test_params() -> None:
     assert docstring.params[1].description == "description 2"
 
 
+def test_attributes() -> None:
+    docstring = parse("Short description")
+    assert len(docstring.params) == 0
+
+    docstring = parse(
+        """
+        Short description
+
+        Attributes:
+            name: description 1
+            priority (int): description 2
+            sender (str?): description 3
+            ratio (Optional[float], optional): description 4
+        """
+    )
+    assert len(docstring.params) == 4
+    assert docstring.params[0].arg_name == "name"
+    assert docstring.params[0].type_name is None
+    assert docstring.params[0].description == "description 1"
+    assert not docstring.params[0].is_optional
+    assert docstring.params[1].arg_name == "priority"
+    assert docstring.params[1].type_name == "int"
+    assert docstring.params[1].description == "description 2"
+    assert not docstring.params[1].is_optional
+    assert docstring.params[2].arg_name == "sender"
+    assert docstring.params[2].type_name == "str"
+    assert docstring.params[2].description == "description 3"
+    assert docstring.params[2].is_optional
+    assert docstring.params[3].arg_name == "ratio"
+    assert docstring.params[3].type_name == "Optional[float]"
+    assert docstring.params[3].description == "description 4"
+    assert docstring.params[3].is_optional
+
+    docstring = parse(
+        """
+        Short description
+
+        Attributes:
+            name: description 1
+                with multi-line text
+            priority (int): description 2
+        """
+    )
+    assert len(docstring.params) == 2
+    assert docstring.params[0].arg_name == "name"
+    assert docstring.params[0].type_name is None
+    assert docstring.params[0].description == (
+        "description 1\n" "with multi-line text"
+    )
+    assert docstring.params[1].arg_name == "priority"
+    assert docstring.params[1].type_name == "int"
+    assert docstring.params[1].description == "description 2"
+
+
 def test_returns() -> None:
     docstring = parse(
         """
@@ -411,12 +484,33 @@ def test_returns() -> None:
         """
         Short description
         Returns:
+            description with: a colon!
+        """
+    )
+    assert docstring.returns is not None
+    assert docstring.returns.type_name is None
+    assert docstring.returns.description == "description with: a colon!"
+
+    docstring = parse(
+        """
+        Short description
+        Returns:
             int: description
         """
     )
     assert docstring.returns is not None
     assert docstring.returns.type_name == "int"
     assert docstring.returns.description == "description"
+
+    docstring = parse(
+        """
+        Returns:
+            Optional[Mapping[str, List[int]]]: A description: with a colon
+        """
+    )
+    assert docstring.returns is not None
+    assert docstring.returns.type_name == "Optional[Mapping[str, List[int]]]"
+    assert docstring.returns.description == "A description: with a colon"
 
     docstring = parse(
         """

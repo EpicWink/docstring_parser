@@ -2,7 +2,15 @@
 
 import typing as T
 
-PARAM_KEYWORDS = {"param", "parameter", "arg", "argument", "key", "keyword"}
+PARAM_KEYWORDS = {
+    "param",
+    "parameter",
+    "arg",
+    "argument",
+    "attribute",
+    "key",
+    "keyword",
+}
 RAISES_KEYWORDS = {"raises", "raise", "except", "exception"}
 RETURNS_KEYWORDS = {"return", "returns"}
 YIELDS_KEYWORDS = {"yield", "yields"}
@@ -45,12 +53,14 @@ class DocstringParam(DocstringMeta):
         arg_name: str,
         type_name: T.Optional[str],
         is_optional: T.Optional[bool],
+        default: T.Optional[str]
     ) -> None:
         """Initialize self."""
         super().__init__(args, description)
         self.arg_name = arg_name
         self.type_name = type_name
         self.is_optional = is_optional
+        self.default = default
 
 
 class DocstringReturns(DocstringMeta):
@@ -60,7 +70,7 @@ class DocstringReturns(DocstringMeta):
         self,
         args: T.List[str],
         description: str,
-        type_name: str,
+        type_name: T.Optional[str],
         is_generator: bool,
     ) -> None:
         """Initialize self."""
@@ -73,7 +83,7 @@ class DocstringRaises(DocstringMeta):
     """DocstringMeta symbolizing :raises metadata."""
 
     def __init__(
-        self, args: T.List[str], description: str, type_name: str
+        self, args: T.List[str], description: str, type_name: T.Optional[str]
     ) -> None:
         """Initialize self."""
         super().__init__(args, description)
