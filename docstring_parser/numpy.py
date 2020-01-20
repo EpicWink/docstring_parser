@@ -88,7 +88,7 @@ _sections = [
     Section("Parameters", _build_param_meta),
     Section("Other Parameters", _build_param_meta),
     Section("Raises", _build_raises_meta),
-    Section("Attributes", ft.partial(_build_other_meta, key="attribute")),
+    Section("Attributes", _build_param_meta),
     Section("Examples", ft.partial(_build_other_meta, key="examples")),
     Section("Returns", _build_returns_meta),
     Section("Yields", ft.partial(_build_returns_meta, yields=True)),
