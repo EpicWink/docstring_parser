@@ -35,7 +35,7 @@ def _build_param_meta(
     args = ["param"] + ([type_name] if type_name else []) + [arg_name]
     type_name = type_name or None
     desc = "\n".join(desc)
-    return DocstringParam(args, desc, arg_name, type_name, None)
+    return DocstringParam(args, desc, arg_name, type_name, None, None)
 
 
 def _build_raises_meta(

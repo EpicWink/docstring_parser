@@ -213,12 +213,15 @@ def test_params() -> None:
     assert docstring.params[0].arg_name == "name"
     assert docstring.params[0].type_name is None
     assert docstring.params[0].description == "description 1"
+    assert docstring.params[0].default is None
     assert docstring.params[1].arg_name == "priority"
     assert docstring.params[1].type_name == "int"
     assert docstring.params[1].description == "description 2"
+    assert docstring.params[1].default is None
     assert docstring.params[2].arg_name == "sender"
     assert docstring.params[2].type_name == "str"
     assert docstring.params[2].description == "description 3"
+    assert docstring.params[2].default is None
 
 
 def test_returns() -> None:
