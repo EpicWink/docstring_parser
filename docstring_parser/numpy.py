@@ -33,9 +33,11 @@ def _build_param_meta(
         desc: T.List[str],
 ) -> DocstringParam:
     args = ["param"] + ([type_name] if type_name else []) + [arg_name]
-    type_name = type_name or None
+    split = type_name.split(",", maxsplit=1) if type_name else ()
+    is_optional = bool(split) and split[-1].strip() == "optional"
+    type_name = None if len(split) < (2 if is_optional else 1) else split[0]
     desc = "\n".join(desc)
-    return DocstringParam(args, desc, arg_name, type_name, None, None)
+    return DocstringParam(args, desc, arg_name, type_name, is_optional, None)
 
 
 def _build_raises_meta(
